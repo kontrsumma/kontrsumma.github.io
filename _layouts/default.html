@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+  {% include head.html %}
+
+  <body>
+    <div class="wrap">
+    
+      {% include header.html %}
+
+      <div class="main">
+        <aside class="main__side">
+            <div class="vk-group">
+                <script src="//vk.com/js/api/openapi.js?88"></script>
+                <div id="vk_groups"></div>
+            </div>
+            <script>VK.Widgets.Group("vk_groups", {mode: 0, width: "200", height: "290"}, 36488329);</script>
+        </aside>
+        <nav class="nav">
+          <a href="/" class="nav__item{% if page.name == 'index.html' %} is-active{% endif %}">
+            <span class="nav__item_title">О нас</span><span class="nav__item_desc">что это такое</span>
+          </a>
+          <a href="/tasks" class="nav__item{% if page.name == 'tasks.html' %} is-active{% endif %}">
+            <span class="nav__item_title">Задания</span><span class="nav__item_desc">прошлых контрольных</span>
+          </a>
+          <a href="/results" class="nav__item{% if page.name == 'results.html' %} is-active{% endif %}">
+            <span class="nav__item_title">Результаты</span><span class="nav__item_desc">2015 года</span>
+          </a>
+        </nav>
+        <section id="content" class="main__content">
+          {{ content }}
+
+          {% include share.html %}
+        </section>  
+      </div>
+
+
+    {% include footer.html %}
+
+    </div>
+  </body>
+
+</html>

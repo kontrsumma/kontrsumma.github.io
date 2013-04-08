@@ -1,0 +1,124 @@
+---
+layout: default
+title: Контрольная сумма. Результаты
+description: Доступны результаты Контрольной суммы. Найди себя!
+---
+<article class="results__intro">
+	<p>Максимальное количество баллов за задачу различается:</p>
+	<ul>
+		<li><span>- с 1 по 6:</span> <strong>5</strong></li>
+		<li><span>- с 7 по 9:</span> <strong>6</strong></li>
+		<li><span>- с 10 по 13:</span> <strong>8</strong></li>
+		<li><span>- с 14 по 15:</span> <strong>10</strong></li>
+	</ul>
+</article>
+
+<div class="cities">
+	<div data-city="*" class="cities__item _active">Все города</div>
+	<div data-city="nsk-nsu" class="cities__item">Новосибирск (НГУ)</div>
+	<div data-city="nsk-nstu" class="cities__item">Новосибирск (НГТУ)</div>
+	<div data-city="vladikavkaz" class="cities__item">Владикавказ</div>
+	<div data-city="miass" class="cities__item">Миасс</div>
+	<div data-city="gubkinskiy" class="cities__item">Губкинский</div>
+	<div data-city="rostov" class="cities__item">Ростов-на-Дону</div>
+	<div data-city="online" class="cities__item">Онлайн</div>
+</div>
+
+<div class="results">
+	<div class="results__item results__header">
+		<input id="results" type="text" placeholder="Введите имя" class="results__search">
+		<div class="points">
+			{% for i in (1..15) %}
+				<span class="points__point">{{ i }}</span>
+			{% endfor %}
+			<span class="points__point points__total"><a href="javascript:results_sort('total')">Ʃ</a></span>
+		</div>
+	</div>
+	
+	{% for city in site.data.results.results %}
+		{% for person in city[1] %}
+			<div data-city="{{ city[0] }}" class="results__item">
+				<div class="points">
+					{% for i in (4..18) %}
+						<span class="points__point">
+							{{ person[i] }}
+						</span>
+					{% endfor %}
+					<span class="points__point points__total">
+						{{ person[19] }}
+					</span>
+				</div>
+				<div class="results__item_name">
+					{{ person[1] }}
+				</div>
+				<div class="results__item_info">
+					{{ person[3] }}
+				</div>
+			</div>
+		{% endfor %}
+	{% endfor %}
+  <div class="results__nofound">Совпадений не найдено</div>
+</div>
+
+<script>
+  function filter_results(query, city) {
+    var count = 0;
+    if (city === "*") {
+      city = null;
+    }
+    res.each(function () {
+      var contains = !query || $(this).find('.results__item_name').text().toLowerCase().indexOf(query.toLowerCase())+1,
+          currCity = $(this).data('city');
+      if (contains && (!city || currCity === city)) {
+        $(this).show();
+        count++;
+      }
+      else {
+        $(this).hide();
+      }
+    });
+    if (!count) {
+      $('.results__nofound').show()
+    }
+    else {
+      $('.results__nofound').hide()
+    }
+  }
+
+  var res = $('.results__item').not('.results__header');
+  $('#results').on('keyup', function () {
+    var query = $(this).val(),
+        city = $('.cities [data-city]._active').data('city');
+    filter_results(query, city);
+  });
+
+  var cities = $('.cities [data-city]');
+  cities.on('click', function (e) {
+    cities.removeClass('_active');
+    $(this).addClass('_active');
+    var city = $(this).data('city'),
+        query = $('#results').val();
+    filter_results(query, city);
+
+  });
+
+  function results_sort(field) {
+    if (field == 'total') {
+      var sortindex = $('.results').data('sortindex');
+      if (!sortindex) {
+        sortindex = 1;
+      }
+      $('.results').data('sortindex', -sortindex);
+      res.detach().sort(function (a,b) {
+        var delta = parseFloat($(a).find('.points__total').text()) - parseFloat($(b).find('.points__total').text());
+        if (delta > 0) {
+          return -sortindex;
+        }
+        if (delta < 0) {
+          return sortindex;
+        }
+        return 0;
+      }).appendTo('.results');
+    }
+  }
+ </script>
